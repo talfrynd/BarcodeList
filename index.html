@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Item List</title>
+    <style type="text/css">
+        
+        body {
+            margin: 0;
+            font-size: 24pt;
+        }
+        
+        button, input {
+            padding: 0.4em 0.7em;
+            font-size: 24pt;
+        }
+        
+        .hidden {
+            display:none;
+        }
+        
+        #container {
+            width: 100%;
+            display: flex;
+            flex-flow: column nowrap;
+        }
+        
+        #topbar {
+            background: yellow;
+            padding: 10px;
+            text-align: right;
+        }
+        
+        #list {
+            padding: 30px;
+            min-height: 30px;
+            
+            flex-grow: 1;
+        }
+        
+        .listItem {
+            width: auto;
+            display: flex;
+            flex-flow: row nowrap;
+            justify-content: space-around;
+            align-items: stretch;
+        }
+        
+        .listItem > * {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+        
+        .barcodePlaintext {
+            flex-grow: 1;
+            overflow-x: visible;
+        }
+        
+        .barcodeImage {
+            justify-content: space-around;
+            flex-grow: 3;
+            min-width: 400px;
+        }
+        
+        .barcodeImage svg {
+            max-width: 100%;
+        }
+        
+        .quantityContainer {
+            justify-content: flex-end;
+            flex-grow: 1;
+            min-width: 270px;
+        }
+        
+        .quantity {
+            
+        }
+        
+        .quantityField {
+            width: 2em;
+            text-align: center;
+        }
+        
+        #entry {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        
+        #entryField {
+            width: 90vw;
+        }
+        
+        @media all and (min-width: 800px) {
+            
+            button, input {
+                font-size: 16pt;
+            }
+        }
+    </style>
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/barcodes/JsBarcode.code128.min.js"></script>
+    <script type="text/javascript">
+        function addEntry(event) {
+            if (event.which === 13) {
+                console.log("add item fired");
+                entryField = document.getElementById("entryField");
+                existingLine = document.getElementById("Item" + entryField.value);
+                
+                if (existingLine) {
+                    existingQuantity = existingLine.getElementsByClassName("quantityField")[0];
+                    existingQuantity.value = parseInt(existingQuantity.value) + 1;
+                } else if (entryField.value === "") {
+                    
+                } else {
+                    newLine = document.getElementById("templateListItem").getElementsByClassName("listItem")[0].cloneNode(true);
+                    
+                    newLine.id = "Item" + entryField.value;
+                    newLine.getElementsByClassName("barcodePlaintext")[0].innerHTML = entryField.value;
+                    JsBarcode(newLine.getElementsByTagName("svg")[0], entryField.value, {
+                        displayValue: false,
+                        width: 4,
+                        height: 50
+                    });
+                    
+                    newLine = document.getElementById("list").appendChild(newLine);
+                    
+                    newLine.getElementsByClassName("quantityUp")[0].addEventListener("click", increaseCount);
+                    newLine.getElementsByClassName("quantityDown")[0].addEventListener("click", decreaseCount);
+                    newLine.getElementsByClassName("deleteConfirm")[0].addEventListener("click", deleteConfirm);
+                    newLine.getElementsByClassName("deleteCancel")[0].addEventListener("click", deleteCancel);
+                    
+                }
+                
+                entryField.value = "";
+            }
+        }
+        
+        function increaseCount(event) {
+            console.log("increase fired");
+            
+            target = event.target.closest(".listItem");
+            targetValue = target.getElementsByClassName("quantityField")[0];
+            targetValue.value = parseInt(targetValue.value) + 1;
+        }
+        
+        function decreaseCount(event) {
+            console.log("decrease fired");
+            
+            target = event.target.closest(".listItem");
+            targetValue = target.getElementsByClassName("quantityField")[0];
+            
+            if (parseInt(targetValue.value) > 1) {
+                targetValue.value = parseInt(targetValue.value) - 1;
+            } else {
+                console.log("delete confirmation fired");
+                target.getElementsByClassName("quantity")[0].classList.add("hidden");
+                target.getElementsByClassName("deleteContainer")[0].classList.remove("hidden");
+            }
+        }
+        
+        function deleteConfirm(event) {
+            console.log("deletion fired");
+            target = event.target.closest(".listItem");
+            
+            target.remove();
+        }
+        
+        function deleteCancel(event) {
+            console.log("deletion cancel fired");
+            target = event.target.closest(".quantityContainer");
+            
+            target.getElementsByClassName("deleteContainer")[0].classList.add("hidden");
+            target.getElementsByClassName("quantity")[0].classList.remove("hidden");
+        }
+        
+        function resetList(event) {
+            console.log("reset fired");
+            document.getElementById("list").innerHTML = "";
+            document.getElementById("entryField").value = "";
+            document.getElementById("entryField").focus();
+            
+        }
+        
+        function setup() {
+            document.getElementById("entryField").addEventListener("keydown", addEntry);
+            document.getElementById("resetButton").addEventListener("click", resetList);
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="topbar">
+            <button id="resetButton">Reset</button>
+        </div>
+        <div id="list">
+            
+        </div>
+        <div id="entry">
+            <input type="text" id="entryField" inputmode="numeric" autofocus="true">
+        </div>
+    </div>
+    <div id="templateListItem" class="hidden">
+        <div class="listItem">
+            <span class="barcodePlaintext">99323</span>
+            <span class="barcodeImage"><svg></svg></span>
+            <span class="quantityContainer">
+                <span class="deleteContainer hidden">
+                    Delete?
+                    <button class="deleteConfirm">Yes</button>
+                    <button class="deleteCancel">No</button>
+                </span>
+                <span class="quantity">
+                    <button class="quantityDown">-</button>&nbsp;<input type="text" class="quantityField" value="1">&nbsp;<button class="quantityUp">+</button>
+                </span>
+            </span>
+        </div>
+    </div>
+</body>
+<script type="text/javascript">
+    setup();
+</script>
+</html>
