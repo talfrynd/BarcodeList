@@ -20,7 +20,8 @@
         }
         
         #container {
-            width: 100%;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             flex-flow: column nowrap;
         }
@@ -29,6 +30,7 @@
             background: yellow;
             padding: 10px;
             text-align: right;
+            flex-grow: 0;
         }
         
         #list {
@@ -83,6 +85,7 @@
         }
         
         #entry {
+            flex-grow: 0;
             display: flex;
             justify-content: space-around;
             align-items: center;
@@ -121,7 +124,7 @@
                     JsBarcode(newLine.getElementsByTagName("svg")[0], entryField.value, {
                         displayValue: false,
                         width: 4,
-                        height: 50
+                        height: 150
                     });
                     
                     newLine = document.getElementById("list").appendChild(newLine);
