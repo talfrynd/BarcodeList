@@ -182,7 +182,7 @@
             console.log("delete check fired");
             
             target = event.target.closest(".listItem");
-            targetValue = target.getElementsByClassName("quantityField")[0];
+            targetValue = target.getElementsByClassName(".quantityContainer")[0];
 
             target.getElementsByClassName("quantity")[0].classList.add("hidden");
             target.getElementsByClassName("deleteContainer")[0].classList.remove("hidden");
