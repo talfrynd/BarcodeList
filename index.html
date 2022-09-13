@@ -85,7 +85,8 @@
         }
         
         .quantity {
-            
+            display: inline-flex;
+            align-items: stretch;
         }
         
         .quantityField {
@@ -140,6 +141,7 @@
                     
                     newLine.getElementsByClassName("quantityUp")[0].addEventListener("click", increaseCount);
                     newLine.getElementsByClassName("quantityDown")[0].addEventListener("click", decreaseCount);
+                    newLine.getElementsByClassName("deleteCheck")[0].addEventListener("click", deleteCheck);
                     newLine.getElementsByClassName("deleteConfirm")[0].addEventListener("click", deleteConfirm);
                     newLine.getElementsByClassName("deleteCancel")[0].addEventListener("click", deleteCancel);
                     
@@ -154,6 +156,7 @@
             
             target = event.target.closest(".listItem");
             targetValue = target.getElementsByClassName("quantityField")[0];
+            
             targetValue.value = parseInt(targetValue.value) + 1;
         }
         
@@ -163,13 +166,26 @@
             target = event.target.closest(".listItem");
             targetValue = target.getElementsByClassName("quantityField")[0];
             
-            if (parseInt(targetValue.value) > 1) {
+            targetValue.value = parseInt(targetValue.value) - 1;
+            
+            // deletes if value is zero or below
+            /* if (parseInt(targetValue.value) > 1) {
                 targetValue.value = parseInt(targetValue.value) - 1;
             } else {
                 console.log("delete confirmation fired");
                 target.getElementsByClassName("quantity")[0].classList.add("hidden");
                 target.getElementsByClassName("deleteContainer")[0].classList.remove("hidden");
-            }
+            } */
+        }
+        
+        function deleteCheck(event) {
+            console.log("delete check fired");
+            
+            target = event.target.closest(".listItem");
+            targetValue = target.getElementsByClassName("quantityField")[0];
+
+            target.getElementsByClassName("quantity")[0].classList.add("hidden");
+            target.getElementsByClassName("deleteContainer")[0].classList.remove("hidden");
         }
         
         function deleteConfirm(event) {
@@ -224,7 +240,7 @@
                     <button class="deleteCancel">No</button>
                 </span>
                 <span class="quantity">
-                    <button class="quantityDown">-</button>&nbsp;<input type="text" class="quantityField" value="1">&nbsp;<button class="quantityUp">+</button>
+                    <button class="deleteCheck">&#128465;</button>&nbsp;<button class="quantityDown">-</button>&nbsp;<input type="text" class="quantityField" value="1">&nbsp;<button class="quantityUp">+</button>
                 </span>
             </span>
         </div>
