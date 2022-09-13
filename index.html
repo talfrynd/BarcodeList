@@ -65,6 +65,7 @@
         .barcodePlaintext {
             flex-grow: 1;
             overflow-x: visible;
+            display: none;
         }
         
         .barcodeImage {
@@ -129,9 +130,10 @@
                     newLine.id = "Item" + entryField.value;
                     newLine.getElementsByClassName("barcodePlaintext")[0].innerHTML = entryField.value;
                     JsBarcode(newLine.getElementsByTagName("svg")[0], entryField.value, {
-                        displayValue: false,
+                        format: "CODE128",
+                        displayValue: true,
                         width: 4,
-                        height: 150
+                        height: 200
                     });
                     
                     newLine = document.getElementById("list").appendChild(newLine);
